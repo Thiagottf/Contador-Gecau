@@ -1,4 +1,4 @@
-# Sistema Contador Banpara
+# Sistema Contador 
 
 Um sistema web moderno para acompanhar quantos dias o sistema está funcionando sem falhas, com sistema de apostas integrado.
 
@@ -182,4 +182,4 @@ Para dúvidas ou problemas:
 
 ## Licença
 
-Este projeto foi desenvolvido para uso interno do Banpara.
+Este projeto foi desenvolvido para uso interno
