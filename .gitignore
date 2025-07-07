@@ -1,0 +1,44 @@
+# Executáveis compilados
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Arquivos temporários do Go
+*.test
+*.prof
+
+# Dependências do Go
+vendor/
+
+# Logs
+*.log
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Arquivos de backup
+*.bak
+*~
+
+# Diretórios de build
+dist/
+build/
+
+# Variáveis de ambiente
+.env
+.env.local
+
+# Cache
+*.cache

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Configurações básicas da página -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de Sistema - Banpara</title>
+    
+    <!-- Arquivos de estilo CSS -->
+    <link rel="stylesheet" href="syles/syles.css">
+    
+    <!-- Fontes do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Ícones do Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho da aplicação com logo e indicador de status -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-server"></i>
+                <h1>Sistema Banpara</h1>
+            </div>
+            <!-- Indicador visual do status do sistema (ativo/inativo) -->
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span class="status-text">Sistema Ativo</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Seção principal: Contador de dias sem falhas -->
+            <section class="counter-section">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <h2><i class="fas fa-calendar-day"></i> Dias Sem Falhas</h2>
+                    </div>
+                    <!-- Display principal do contador -->
+                    <div class="counter-display">
+                        <div class="days-count" id="daysCount">0</div>
+                        <div class="counter-subtitle">dias consecutivos</div>
+                    </div>
+                    <!-- Informações adicionais do sistema -->
+                    <div class="counter-info">
+                        <div class="info-item">
+                            <span class="info-label">Início:</span>
+                            <span class="info-value" id="startDate">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Último Reset:</span>
+                            <span class="info-value" id="lastReset">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção de controles: definir data inicial e reset do sistema -->
+            <section class="controls-section">
+                <div class="controls-card">
+                    <h3><i class="fas fa-cogs"></i> Controles do Sistema</h3>
+                    <div class="controls-grid">
+                        <!-- Controle para definir uma data de início personalizada -->
+                        <div class="control-group">
+                            <label for="startDateInput">Data de Início:</label>
+                            <input type="date" id="startDateInput" class="date-input">
+                            <button class="btn btn-primary" onclick="setStartDate()">
+                                <i class="fas fa-calendar-plus"></i> Definir Início
+                            </button>
+                        </div>
+                        <!-- Botões de controle do sistema -->
+                        <div class="control-actions">
+                            <!-- Marca o sistema como "caído" (não reinicia o contador) -->
+                            <button class="btn btn-danger" onclick="resetSystem()">
+                                <i class="fas fa-exclamation-triangle"></i> Sistema Caiu
+                            </button>
+                            <!-- Reinicia completamente o contador -->
+                            <button class="btn btn-success" onclick="restartSystem()">
+                                <i class="fas fa-redo"></i> Reiniciar Contador
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sistema de Apostas -->
+            <section class="bets-section">
+                <div class="bets-card">
+                    <h3><i class="fas fa-dice"></i> Apostas do Sistema</h3>
+                    
+                    <!-- Formulário para criar uma nova aposta -->
+                    <div class="bet-form">
+                        <h4>Nova Aposta</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="betterName">Nome do Apostador:</label>
+                                <input type="text" id="betterName" placeholder="Seu nome" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="betDays">Aposta (dias):</label>
+                                <input type="number" id="betDays" placeholder="Ex: 30" min="1" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="betItem">Prêmio da Aposta:</label>
+                                <input type="text" id="betItem" placeholder="Ex: R$ 50, Almoço, etc." class="form-input">
+                            </div>
+                        </div>
+                        <!-- Botão para criar a aposta -->
+                        <button class="btn btn-primary btn-full" onclick="createBet()">
+                            <i class="fas fa-plus"></i> Fazer Aposta
+                        </button>
+                    </div>
+
+                    <!-- Lista de todas as apostas feitas -->
+                    <div class="bets-list">
+                        <h4>Apostas Ativas</h4>
+                        <div id="betsList" class="bets-container">
+                            <!-- As apostas serão carregadas aqui dinamicamente via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal de confirmação para ações importantes -->
+        <div id="confirmModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Confirmar Ação</h3>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage">Tem certeza que deseja realizar esta ação?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button class="btn btn-danger" id="confirmButton" onclick="confirmAction()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notificação toast para feedback ao usuário -->
+        <div id="toast" class="toast">
+            <span id="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- JavaScript da aplicação -->
+    <script>
+        // Configuração da API base URL
+        const API_BASE = 'http://localhost:8080/api';
+        let pendingAction = null; // Armazena ação pendente para confirmação
+
+        // Executa quando a página termina de carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSystemStatus(); // Carrega status inicial
+            loadBets(); // Carrega apostas iniciais
+            setInterval(loadSystemStatus, 5000); // Atualiza status a cada 5 segundos
+        });
+
+        // Função para carregar e atualizar o status do sistema
+        async function loadSystemStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/status`);
+                const data = await response.json();
+                
+                // Atualiza contador de dias
+                document.getElementById('daysCount').textContent = data.days_running;
+                // Atualiza data de início formatada para português
+                document.getElementById('startDate').textContent = new Date(data.start_date).toLocaleDateString('pt-BR');
+                // Atualiza data do último reset
+                document.getElementById('lastReset').textContent = new Date(data.last_reset).toLocaleDateString('pt-BR');
+                
+                // Atualiza indicador visual de status
+                const statusIndicator = document.getElementById('statusIndicator');
+                const statusText = statusIndicator.querySelector('.status-text');
+                const statusDot = statusIndicator.querySelector('.status-dot');
+                
+                if (data.is_running) {
+                    statusText.textContent = 'Sistema Ativo';
+                    statusDot.className = 'status-dot active';
+                } else {
+                    statusText.textContent = 'Sistema Inativo';
+                    statusDot.className = 'status-dot inactive';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar status:', error);
+                showToast('Erro ao conectar com o servidor', 'error');
+            }
+        }
+
+        // Função para carregar lista de apostas do servidor
+        async function loadBets() {
+            try {
+                const response = await fetch(`${API_BASE}/bets`);
+                const bets = await response.json();
+                displayBets(bets || []);
+            } catch (error) {
+                console.error('Erro ao carregar apostas:', error);
+            }
+        }
+
+        // Função para exibir as apostas na interface
+        function displayBets(bets) {
+            const container = document.getElementById('betsList');
+            
+            // Se não há apostas, mostra mensagem
+            if (bets.length === 0) {
+                container.innerHTML = '<div class="no-bets">Nenhuma aposta feita ainda</div>';
+                return;
+            }
+            
+            // Gera HTML para cada aposta
+            container.innerHTML = bets.map(bet => `
+                <div class="bet-item ${bet.status}">
+                    <div class="bet-info">
+                        <div class="bet-name">${bet.name}</div>
+                        <div class="bet-details">
+                            <span class="bet-days">${bet.bet_days} dias</span>
+                            <span class="bet-prize">${bet.bet_item}</span>
+                        </div>
+                        <div class="bet-date">${new Date(bet.date).toLocaleDateString('pt-BR')}</div>
+                    </div>
+                    <div class="bet-status">
+                        <span class="status-badge ${bet.status}">${getStatusText(bet.status)}</span>
+                        <button class="btn-remove" onclick="deleteBet(${bet.id})" title="Remover aposta">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Função para converter status técnico em texto legível
+        function getStatusText(status) {
+            const statusMap = {
+                'active': 'Ativa',
+                'won': 'Ganhou',
+                'lost': 'Perdeu'
+            };
+            return statusMap[status] || status;
+        }
+
+        // Função para definir uma nova data de início do sistema
+        async function setStartDate() {
+            const startDate = document.getElementById('startDateInput').value;
+            if (!startDate) {
+                showToast('Por favor, selecione uma data', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/start-date`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ start_date: startDate })
+                });
+
+                if (response.ok) {
+                    showToast('Data de início definida com sucesso!', 'success');
+                    loadSystemStatus();
+                    loadBets();
+                } else {
+                    throw new Error('Erro ao definir data');
+                }
+            } catch (error) {
+                showToast('Erro ao definir data de início', 'error');
+            }
+        }
+
+        // Função para marcar o sistema como "caído" (reset)
+        function resetSystem() {
+            showConfirmModal(
+                'Confirmar Reset do Sistema',
+                'Isso irá marcar o sistema como "caído" e interromper a contagem. Deseja continuar?',
+                'danger',
+                async () => {
+                    try {
+                        const response = await fetch(`${API_BASE}/reset`, { method: 'POST' });
+                        if (response.ok) {
+                            showToast('Sistema resetado - Sistema marcado como caído', 'warning');
+                            loadSystemStatus();
+                            loadBets();
+                        }
+                    } catch (error) {
+                        showToast('Erro ao resetar sistema', 'error');
+                    }
+                }
+            );
+        }
+
+        // Função para reiniciar completamente o contador (zerando tudo)
+        function restartSystem() {
+            showConfirmModal(
+                'Reiniciar Contador',
+                'Isso irá reiniciar a contagem do zero. Deseja continuar?',
+                'success',
+                async () => {
+                    try {
+                        const response = await fetch(`${API_BASE}/restart`, { method: 'POST' });
+                        if (response.ok) {
+                            showToast('Contador reiniciado com sucesso!', 'success');
+                            loadSystemStatus();
+                            loadBets();
+                        }
+                    } catch (error) {
+                        showToast('Erro ao reiniciar contador', 'error');
+                    }
+                }
+            );
+        }
+
+        // Função para criar uma nova aposta
+        async function createBet() {
+            // Coleta dados do formulário
+            const name = document.getElementById('betterName').value.trim();
+            const days = parseInt(document.getElementById('betDays').value);
+            const item = document.getElementById('betItem').value.trim();
+
+            // Validação dos campos
+            if (!name || !days || !item) {
+                showToast('Por favor, preencha todos os campos', 'error');
+                return;
+            }
+
+            if (days <= 0) {
+                showToast('O número de dias deve ser maior que zero', 'error');
+                return;
+            }
+
+            try {
+                // Envia aposta para o servidor
+                const response = await fetch(`${API_BASE}/bets`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        bet_days: days,
+                        bet_item: item
+                    })
+                });
+
+                if (response.ok) {
+                    showToast('Aposta criada com sucesso!', 'success');
+                    // Limpa o formulário após criar a aposta
+                    document.getElementById('betterName').value = '';
+                    document.getElementById('betDays').value = '';
+                    document.getElementById('betItem').value = '';
+                    loadBets(); // Recarrega a lista de apostas
+                } else {
+                    throw new Error('Erro ao criar aposta');
+                }
+            } catch (error) {
+                showToast('Erro ao criar aposta', 'error');
+            }
+        }
+
+        // Função para remover uma aposta específica
+        async function deleteBet(betId) {
+            showConfirmModal(
+                'Remover Aposta',
+                'Tem certeza que deseja remover esta aposta?',
+                'danger',
+                async () => {
+                    try {
+                        const response = await fetch(`${API_BASE}/bets/${betId}`, { method: 'DELETE' });
+                        if (response.ok) {
+                            showToast('Aposta removida com sucesso!', 'success');
+                            loadBets();
+                        }
+                    } catch (error) {
+                        showToast('Erro ao remover aposta', 'error');
+                    }
+                }
+            );
+        }
+
+        // Função para exibir modal de confirmação
+        function showConfirmModal(title, message, type, action) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            const confirmButton = document.getElementById('confirmButton');
+            confirmButton.className = `btn btn-${type}`;
+            pendingAction = action; // Armazena a ação a ser executada
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        // Função para fechar o modal de confirmação
+        function closeModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            pendingAction = null;
+        }
+
+        // Função para executar a ação confirmada
+        function confirmAction() {
+            if (pendingAction) {
+                pendingAction();
+                closeModal();
+            }
+        }
+
+        // Função para exibir notificações toast
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = `toast ${type} show`;
+            toastMessage.textContent = message;
+            
+            // Remove a notificação após 3 segundos
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Fecha modal ao clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
