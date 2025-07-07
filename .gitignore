@@ -1,8 +1,14 @@
-# Executáveis compilados
+# Executáveis (Golang)
 *.exe
 *.dll
 *.so
 *.dylib
+main
+main.exe
+
+# Arquivos compilados antigos (da estrutura anterior)
+syles/main.exe
+syles/main
 
 # Arquivos temporários do Go
 *.test

@@ -23,18 +23,26 @@ Este sistema foi desenvolvido para monitorar quantos dias consecutivos um servi�
 
 ```
 ProjetoCotador/
-├── syles/
-│   ├── main.go          # Backend em Go
-│   ├── main.exe         # Executável compilado
-│   └── syles.css        # Estilos CSS
-├── index.html           # Frontend da aplicação
-├── go.mod              # Dependências do Go
-├── go.sum              # Checksums das dependências
-├── README.md           # Instruções básicas
-├── DOCUMENTACAO.md     # Esta documentação
-├── iniciar_servidor.bat # Script Windows (Batch)
-└── iniciar_servidor.ps1 # Script PowerShell
+├── main.go                    # Servidor backend em Go (ARQUIVO PRINCIPAL)
+├── index.html                 # Frontend da aplicação
+├── go.mod                     # Dependências do Go
+├── go.sum                     # Checksums das dependências
+├── .gitignore                 # Arquivos ignorados pelo Git
+├── static/                    # Arquivos estáticos do frontend
+│   ├── css/
+│   │   └── styles.css         # Estilos CSS principais
+│   └── js/                    # Scripts JavaScript (para futuras expansões)
+├── README.md                  # Instruções básicas de uso
+├── DOCUMENTACAO.md            # Esta documentação técnica
+├── iniciar_servidor.bat       # Script Windows (Batch)
+└── iniciar_servidor.ps1       # Script PowerShell
 ```
+
+### Principais Mudanças na Estrutura
+- **main.go** movido para a raiz do projeto (melhor organização)
+- **static/** pasta criada para arquivos estáticos
+- **styles.css** reorganizado em static/css/
+- Scripts de inicialização atualizados para nova estrutura
 
 ## Backend - Explicação Detalhada
 
@@ -207,12 +215,10 @@ go mod tidy
 
 ### Executar o Servidor
 ```bash
-# Opção 1: Go direto
-cd syles
+# Opção 1: Go direto (a partir da raiz do projeto)
 go run main.go
 
 # Opção 2: Compilar e executar
-cd syles
 go build -o main.exe main.go
 ./main.exe
 
@@ -221,7 +227,7 @@ go build -o main.exe main.go
 iniciar_servidor.bat
 
 # PowerShell:
-iniciar_servidor.ps1
+.\iniciar_servidor.ps1
 ```
 
 ### Acessar a Aplicação
@@ -244,7 +250,7 @@ setInterval(loadSystemStatus, 5000); // 5000ms = 5 segundos
 
 ### Alterar Cores
 ```css
-/* No syles.css, alterar variáveis de cor: */
+/* No static/css/styles.css, alterar variáveis de cor: */
 .btn-primary {
     background: linear-gradient(135deg, #667eea, #764ba2);
 }

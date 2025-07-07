@@ -235,8 +235,8 @@ func main() {
 	api.HandleFunc("/bets/{id}", deleteBetHandler).Methods("DELETE")    // DELETE: Remover aposta específica
 	
 	// Configura o servidor para servir arquivos estáticos (HTML, CSS, JS)
-	// Os arquivos ficam na pasta pai (../) em relação ao diretório atual
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("../"))).Methods("GET")
+	// Os arquivos ficam no diretório atual (./) 
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./"))).Methods("GET")
 	
 	// Configura CORS para permitir requisições do frontend
 	c := cors.New(cors.Options{

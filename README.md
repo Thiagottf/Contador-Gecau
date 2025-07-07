@@ -58,9 +58,19 @@ Um sistema web moderno para acompanhar quantos dias o sistema está funcionando 
    ```
 
 3. **Execute o servidor**
+   
+   **Opção A - Usando Go diretamente:**
    ```powershell
-   cd syles
    go run main.go
+   ```
+   
+   **Opção B - Usando scripts automatizados:**
+   ```powershell
+   # Windows (PowerShell)
+   .\iniciar_servidor.ps1
+   
+   # Windows (Prompt de Comando)
+   iniciar_servidor.bat
    ```
 
 4. **Acesse o sistema**
@@ -72,12 +82,19 @@ Um sistema web moderno para acompanhar quantos dias o sistema está funcionando 
 
 ```
 ProjetoCotador/
-├── index.html          # Página principal do frontend
-├── go.mod             # Dependências do Go
-├── syles/
-│   ├── main.go        # Servidor backend em Go
-│   └── syles.css      # Estilos CSS
-└── README.md          # Este arquivo
+├── main.go                    # Servidor backend em Go (PRINCIPAL)
+├── index.html                 # Página principal do frontend
+├── go.mod                     # Dependências do Go
+├── go.sum                     # Checksums das dependências
+├── iniciar_servidor.bat       # Script de execução (Windows CMD)
+├── iniciar_servidor.ps1       # Script de execução (PowerShell)
+├── .gitignore                 # Arquivos ignorados pelo Git
+├── static/                    # Arquivos estáticos do frontend
+│   ├── css/
+│   │   └── styles.css         # Estilos CSS principais
+│   └── js/                    # Scripts JavaScript (futuro)
+├── DOCUMENTACAO.md            # Documentação técnica detalhada
+└── README.md                  # Este arquivo
 ```
 
 ## API Endpoints
@@ -139,7 +156,7 @@ POST /api/bets
 ## Personalização
 
 ### Cores e Tema
-O arquivo `syles.css` pode ser editado para personalizar:
+O arquivo `static/css/styles.css` pode ser editado para personalizar:
 - Cores principais (atualmente azul/roxo)
 - Fontes e tipografia
 - Espaçamentos e layouts
